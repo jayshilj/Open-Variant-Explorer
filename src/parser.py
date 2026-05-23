@@ -119,6 +119,28 @@ def compute_dfg_data(df, variant_cases=None):
         
     return dfg_freq, dfg_perf, activity_freq
 
+def get_case_durations(df):
+    """
+    Calculate the throughput time (duration) for each case.
+    """
+    case_durations = []
+    case_groups = df.groupby('case:concept:name')
+    
+    for case_id, group in case_groups:
+        start_time = group['time:timestamp'].min()
+        end_time = group['time:timestamp'].max()
+        duration_seconds = (end_time - start_time).total_seconds()
+        
+        case_durations.append({
+            "case_id": case_id,
+            "start_time": start_time,
+            "end_time": end_time,
+            "duration_days": duration_seconds / (24 * 3600),
+            "activities_count": len(group)
+        })
+        
+    return pd.DataFrame(case_durations)
+
 def format_duration(seconds):
     """Format duration in seconds to a human-readable string."""
     if seconds < 60:
