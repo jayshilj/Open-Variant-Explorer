@@ -1,0 +1,31 @@
+case_id,activity,timestamp,user,amount
+Case_1,Create Order,2026-05-01 09:00:00,Alice,1500.00
+Case_1,Approve Credit,2026-05-01 10:30:00,Bob,1500.00
+Case_1,Pack Goods,2026-05-01 13:00:00,Charlie,1500.00
+Case_1,Ship Goods,2026-05-02 08:30:00,System,1500.00
+Case_1,Receive Payment,2026-05-05 14:00:00,System,1500.00
+Case_1,Close Order,2026-05-05 16:00:00,Alice,1500.00
+Case_2,Create Order,2026-05-01 09:15:00,Alice,2400.00
+Case_2,Approve Credit,2026-05-01 11:00:00,Bob,2400.00
+Case_2,Pack Goods,2026-05-01 14:30:00,Charlie,2400.00
+Case_2,Ship Goods,2026-05-02 09:00:00,System,2400.00
+Case_2,Receive Payment,2026-05-06 11:30:00,System,2400.00
+Case_2,Close Order,2026-05-06 15:00:00,Alice,2400.00
+Case_3,Create Order,2026-05-01 10:00:00,Diane,850.00
+Case_3,Approve Credit,2026-05-02 11:30:00,Bob,850.00
+Case_3,Pack Goods,2026-05-02 15:00:00,Charlie,850.00
+Case_3,Ship Goods,2026-05-03 10:00:00,System,850.00
+Case_3,Receive Payment,2026-05-07 09:30:00,System,850.00
+Case_3,Close Order,2026-05-07 11:00:00,Diane,850.00
+Case_4,Create Order,2026-05-01 10:30:00,Diane,5200.00
+Case_4,Request Additional Info,2026-05-01 14:00:00,Bob,5200.00
+Case_4,Approve Credit,2026-05-03 09:30:00,Bob,5200.00
+Case_4,Pack Goods,2026-05-03 13:00:00,Charlie,5200.00
+Case_4,Ship Goods,2026-05-04 08:30:00,System,5200.00
+Case_4,Receive Payment,2026-05-12 16:00:00,System,5200.00
+Case_4,Close Order,2026-05-12 17:30:00,Diane,5200.00
+Case_5,Create Order,2026-05-02 09:00:00,Alice,120.00
+Case_5,Pack Goods,2026-05-02 10:00:00,Charlie,120.00
+Case_5,Ship Goods,2026-05-02 14:00:00,System,120.00
+Case_5,Receive Payment,2026-05-03 10:00:00,System,120.00
+Case_5,Close Order,2026-05-03 12:00:00,Alice,120.00
