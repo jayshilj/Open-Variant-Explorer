@@ -270,7 +270,7 @@ if file_to_parse is not None:
                 )
                 fig.update_layout(
                     paper_bgcolor="rgba(0,0,0,0)",
-                    plot_bgcolor="rgba(f8,f9,fa,0.5)",
+                    plot_bgcolor="rgba(248,249,250,0.5)",
                     margin=dict(l=20, r=20, t=40, b=20),
                     height=380
                 )
