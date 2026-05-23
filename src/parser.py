@@ -27,6 +27,49 @@ def load_and_clean_csv(file_path_or_buffer, case_col, activity_col, timestamp_co
     df = df.sort_values(by=['case:concept:name', 'time:timestamp'])
     return df
 
+def extract_variants(df):
+    """
+    Extract and calculate process variants (sequences of activities).
+    Returns a sorted list of dictionaries with variant information:
+    [
+        {
+            "id": 1,
+            "activities": ["Create Order", "Approve Credit", ...],
+            "case_count": 10,
+            "frequency": 0.45,
+            "cases": ["Case_1", "Case_3", ...]
+        }
+    ]
+    """
+    # Group by Case ID and get chronological list of activities
+    case_groups = df.groupby('case:concept:name')
+    case_variants = {}
+    
+    for case_id, group in case_groups:
+        activities = tuple(group['concept:name'].tolist())
+        if activities not in case_variants:
+            case_variants[activities] = []
+        case_variants[activities].append(case_id)
+        
+    total_cases = len(case_groups)
+    sorted_variants = sorted(
+        case_variants.items(), 
+        key=lambda x: len(x[1]), 
+        reverse=True
+    )
+    
+    variants_info = []
+    for idx, (activities, cases) in enumerate(sorted_variants, 1):
+        variants_info.append({
+            "id": idx,
+            "activities": list(activities),
+            "case_count": len(cases),
+            "frequency": len(cases) / total_cases if total_cases > 0 else 0,
+            "cases": cases
+        })
+        
+    return variants_info
+
 def format_duration(seconds):
     """Format duration in seconds to a human-readable string."""
     if seconds < 60:
