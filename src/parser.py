@@ -9,14 +9,7 @@ def load_and_clean_csv(file_path_or_buffer, case_col, activity_col, timestamp_co
     """
     df = pd.read_csv(file_path_or_buffer)
     # Clean the dataframe using PM4Py utility
-    df = dataframe_utils.clean_double_col(df)
-    
-    # Rename columns to standard PM4Py format internally for ease of use
-    df = df.rename(columns={
-        case_col: 'case:concept:name',
-        activity_col: 'concept:name',
-        timestamp_col: 'time:timestamp'
-    })
+    df = pm4py.format_dataframe(df, case_id=case_col, activity_key=activity_col, timestamp_key=timestamp_col)
     
     # Ensure correct types
     df['case:concept:name'] = df['case:concept:name'].astype(str)
@@ -87,7 +80,7 @@ def compute_dfg_data(df, variant_cases=None):
     activity_freq = df['concept:name'].value_counts().to_dict()
     
     # Get DFG with frequencies
-    dfg_freq = pm4py.discover_directly_follows_graph(df)
+    dfg_freq, _, _ = pm4py.discover_directly_follows_graph(df)
     
     # Calculate DFG with performance (durations)
     dfg_perf = {}
