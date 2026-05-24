@@ -3,10 +3,25 @@ import os
 from pyvis.network import Network
 from src.parser import format_duration
 
-def generate_dfg_network(dfg_freq, dfg_perf, activity_freq, metric="frequency"):
+from typing import Dict, Tuple, Any
+
+def generate_dfg_network(
+    dfg_freq: Dict[Tuple[str, str], int], 
+    dfg_perf: Dict[Tuple[str, str], float], 
+    activity_freq: Dict[str, int], 
+    metric: str = "frequency"
+) -> str:
     """
     Generate an interactive Directly-Follows Graph network using Pyvis.
-    metric can be "frequency" or "performance".
+    
+    Args:
+        dfg_freq: Dictionary of transitions and their frequencies.
+        dfg_perf: Dictionary of transitions and their average durations.
+        activity_freq: Dictionary of activities and their frequencies.
+        metric: "frequency" or "performance".
+        
+    Returns:
+        str: HTML code for the rendered interactive graph.
     """
     net = Network(
         height="600px", 
@@ -33,17 +48,26 @@ def generate_dfg_network(dfg_freq, dfg_perf, activity_freq, metric="frequency"):
         return "<p style='color:red;'>No activity data found.</p>"
         
     max_freq = max(activity_freq.values()) if activity_freq.values() else 1
+    total_events = sum(activity_freq.values())
     
     for act, freq in activity_freq.items():
         # Scale size logarithmically/proportionally based on frequency
         size = int(max(15, min(45, 12 + (freq / max_freq) * 25)))
+        freq_pct = (freq / total_events) * 100 if total_events > 0 else 0
         
         # Build node title (tooltip)
-        tooltip = f"<b>Activity:</b> {act}<br><b>Occurrences:</b> {freq}"
+        tooltip = f"<b>Activity:</b> {act}<br><b>Occurrences:</b> {freq} ({freq_pct:.1f}%)"
         
-        # Aesthetic colors (Celonis-inspired blues/slates)
-        bg_color = "#3b5bdb" if freq > (max_freq * 0.7) else "#4dabf7"
-        border_color = "#1c7ed6"
+        # Aesthetic colors (Celonis-inspired sleek deep-blue gradients)
+        if freq > (max_freq * 0.7):
+            bg_color = "#1f3a60"  # Deep Royal Navy
+            border_color = "#0f1a30"
+        elif freq > (max_freq * 0.3):
+            bg_color = "#3b5bdb"  # Indigo Blue
+            border_color = "#1c7ed6"
+        else:
+            bg_color = "#74c0fc"  # Sky Blue
+            border_color = "#3b5bdb"
         
         net.add_node(
             act,
