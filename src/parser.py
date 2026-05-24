@@ -215,3 +215,24 @@ def format_duration(seconds):
         return f"{hours:.1f}h"
     days = hours / 24
     return f"{days:.1f}d"
+
+def compute_activity_durations(df: pd.DataFrame) -> Dict[str, float]:
+    """
+    Calculate the average outbound transition latency in seconds for each activity.
+    Helps isolate which activity points trigger the largest operational delay.
+    """
+    transition_times = []
+    case_groups = df.groupby('case:concept:name')
+    for case_id, group in case_groups:
+        sorted_group = group.sort_values(by='time:timestamp')
+        activities = sorted_group['concept:name'].tolist()
+        timestamps = sorted_group['time:timestamp'].tolist()
+        for i in range(len(activities) - 1):
+            act_a = activities[i]
+            duration = (timestamps[i+1] - timestamps[i]).total_seconds()
+            transition_times.append({'activity': act_a, 'duration': duration})
+            
+    if not transition_times:
+        return {}
+    df_trans = pd.DataFrame(transition_times)
+    return df_trans.groupby('activity')['duration'].mean().to_dict()
