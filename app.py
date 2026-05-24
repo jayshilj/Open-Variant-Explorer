@@ -155,6 +155,14 @@ if file_to_parse is not None:
                     mime="text/csv",
                     use_container_width=True
                 )
+            
+            with st.expander("⏱️ SLA Target Settings", expanded=False):
+                sla_target = st.number_input(
+                    "SLA Lead Time Limit (Days):",
+                    min_value=0.1,
+                    value=5.0,
+                    step=0.5
+                )
         
         # --- TITLE BLOCK ---
         st.markdown("<h1 style='margin-bottom: 5px;'>📊 Process Discovery & Variant Explorer</h1>", unsafe_allow_html=True)
