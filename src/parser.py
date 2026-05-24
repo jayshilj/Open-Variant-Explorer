@@ -2,10 +2,26 @@ import pandas as pd
 import pm4py
 from pm4py.objects.log.util import dataframe_utils
 from datetime import timedelta
+from typing import Union, List, Dict, Tuple, Optional, Any
+import io
 
-def load_and_clean_csv(file_path_or_buffer, case_col, activity_col, timestamp_col):
+def load_and_clean_csv(
+    file_path_or_buffer: Union[str, io.StringIO, io.BytesIO], 
+    case_col: str, 
+    activity_col: str, 
+    timestamp_col: str
+) -> pd.DataFrame:
     """
-    Load a CSV event log and convert timestamps.
+    Load a CSV event log and convert timestamps into a standard format.
+    
+    Args:
+        file_path_or_buffer: Path to CSV or a file-like buffer object.
+        case_col: Column name containing the case identifiers.
+        activity_col: Column name containing the activity names.
+        timestamp_col: Column name containing the timestamps.
+        
+    Returns:
+        pd.DataFrame: Sorted, standardized event log dataframe.
     """
     df = pd.read_csv(file_path_or_buffer)
     # Clean the dataframe using PM4Py utility
@@ -14,25 +30,21 @@ def load_and_clean_csv(file_path_or_buffer, case_col, activity_col, timestamp_co
     # Ensure correct types
     df['case:concept:name'] = df['case:concept:name'].astype(str)
     df['concept:name'] = df['concept:name'].astype(str)
-    df['time:timestamp'] = pd.to_datetime(df['time:timestamp'])
+    df['time:timestamp'] = pd.to_datetime(df['time:timestamp'], utc=True).dt.tz_localize(None)
     
     # Sort values to preserve process chronological order
     df = df.sort_values(by=['case:concept:name', 'time:timestamp'])
     return df
 
-def extract_variants(df):
+def extract_variants(df: pd.DataFrame) -> List[Dict[str, Any]]:
     """
     Extract and calculate process variants (sequences of activities).
-    Returns a sorted list of dictionaries with variant information:
-    [
-        {
-            "id": 1,
-            "activities": ["Create Order", "Approve Credit", ...],
-            "case_count": 10,
-            "frequency": 0.45,
-            "cases": ["Case_1", "Case_3", ...]
-        }
-    ]
+    
+    Args:
+        df: Standardized event log DataFrame.
+        
+    Returns:
+        List[Dict[str, Any]]: List of sorted dictionaries with variant details.
     """
     # Group by Case ID and get chronological list of activities
     case_groups = df.groupby('case:concept:name')
