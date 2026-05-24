@@ -47,16 +47,36 @@ def load_and_clean_csv(
     Returns:
         pd.DataFrame: Sorted, standardized event log dataframe.
     """
-    # Support hybrid CSV/JSON parsing
+    # Support hybrid CSV/JSON parsing with robust detection
+    df = None
     if isinstance(file_path_or_buffer, str) and file_path_or_buffer.lower().endswith('.json'):
         df = pd.read_json(file_path_or_buffer)
     else:
-        try:
-            df = pd.read_csv(file_path_or_buffer)
-        except Exception:
-            if hasattr(file_path_or_buffer, 'seek'):
+        # Check if the buffer content looks like JSON
+        looks_like_json = False
+        if hasattr(file_path_or_buffer, 'read'):
+            try:
+                lead_chars = file_path_or_buffer.read(50).strip()
                 file_path_or_buffer.seek(0)
+                if lead_chars.startswith(('[', '{')):
+                    looks_like_json = True
+            except Exception:
+                pass
+                
+        if looks_like_json:
             df = pd.read_json(file_path_or_buffer)
+        else:
+            try:
+                df = pd.read_csv(file_path_or_buffer)
+                # If columns are not found and it might be JSON, fallback
+                if case_col not in df.columns and activity_col not in df.columns:
+                    if hasattr(file_path_or_buffer, 'seek'):
+                        file_path_or_buffer.seek(0)
+                    df = pd.read_json(file_path_or_buffer)
+            except Exception:
+                if hasattr(file_path_or_buffer, 'seek'):
+                    file_path_or_buffer.seek(0)
+                df = pd.read_json(file_path_or_buffer)
             
     # Validate column mappings
     validate_csv_headers(df, case_col, activity_col, timestamp_col)

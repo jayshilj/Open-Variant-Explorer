@@ -47,6 +47,22 @@ Case_2,Close Order,2026-05-02 10:00:00,Alice
             )
         self.assertIn("missing the following required columns: Case ID column 'case_id'", str(context.exception))
 
+    def test_load_and_clean_json(self):
+        """Test if hybrid loader correctly reads and standardizes JSON logs."""
+        json_data = StringIO(
+            '[{"case_id": "Case_X", "activity": "A", "timestamp": "2026-05-01 12:00:00"},'
+            '{"case_id": "Case_X", "activity": "B", "timestamp": "2026-05-01 13:00:00"}]'
+        )
+        df_json = load_and_clean_csv(
+            json_data,
+            case_col="case_id",
+            activity_col="activity",
+            timestamp_col="timestamp"
+        )
+        self.assertEqual(len(df_json), 2)
+        self.assertEqual(df_json.iloc[0]['concept:name'], 'A')
+        self.assertEqual(df_json.iloc[1]['concept:name'], 'B')
+
     def test_extract_variants(self):
         """Test if unique process variants are correctly sequenced and ranked."""
         variants = extract_variants(self.df)
