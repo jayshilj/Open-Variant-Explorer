@@ -5,6 +5,30 @@ from datetime import timedelta
 from typing import Union, List, Dict, Tuple, Optional, Any
 import io
 
+def validate_csv_headers(
+    df: pd.DataFrame, 
+    case_col: str, 
+    activity_col: str, 
+    timestamp_col: str
+) -> None:
+    """
+    Validate that the requested columns exist in the DataFrame.
+    Raises ValueError with descriptive instructions if any column is missing.
+    """
+    missing = []
+    if case_col not in df.columns:
+        missing.append(f"Case ID column '{case_col}'")
+    if activity_col not in df.columns:
+        missing.append(f"Activity column '{activity_col}'")
+    if timestamp_col not in df.columns:
+        missing.append(f"Timestamp column '{timestamp_col}'")
+        
+    if missing:
+        raise ValueError(
+            f"CSV file is missing the following required columns: {', '.join(missing)}. "
+            f"Available columns are: {list(df.columns)}"
+        )
+
 def load_and_clean_csv(
     file_path_or_buffer: Union[str, io.StringIO, io.BytesIO], 
     case_col: str, 
@@ -24,6 +48,9 @@ def load_and_clean_csv(
         pd.DataFrame: Sorted, standardized event log dataframe.
     """
     df = pd.read_csv(file_path_or_buffer)
+    # Validate column mappings
+    validate_csv_headers(df, case_col, activity_col, timestamp_col)
+    
     # Clean the dataframe using PM4Py utility
     df = pm4py.format_dataframe(df, case_id=case_col, activity_key=activity_col, timestamp_key=timestamp_col)
     
