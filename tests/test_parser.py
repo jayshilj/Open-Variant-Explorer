@@ -35,6 +35,18 @@ Case_2,Close Order,2026-05-02 10:00:00,Alice
         self.assertEqual(len(self.df), 5)
         self.assertTrue(pd.api.types.is_datetime64_any_dtype(self.df['time:timestamp']))
 
+    def test_validate_csv_headers_missing(self):
+        """Test if ValueError is correctly raised when columns are missing."""
+        invalid_csv = StringIO("wrong_case,activity,timestamp\n1,ActA,2026-05-01 09:00:00")
+        with self.assertRaises(ValueError) as context:
+            load_and_clean_csv(
+                invalid_csv,
+                case_col="case_id",
+                activity_col="activity",
+                timestamp_col="timestamp"
+            )
+        self.assertIn("missing the following required columns: Case ID column 'case_id'", str(context.exception))
+
     def test_extract_variants(self):
         """Test if unique process variants are correctly sequenced and ranked."""
         variants = extract_variants(self.df)
