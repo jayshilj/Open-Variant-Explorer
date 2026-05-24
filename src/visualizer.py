@@ -93,8 +93,13 @@ def generate_dfg_network(
             # Scale edge width
             width = max(1.0, min(8.0, 1.0 + (val / max_edge_val) * 7))
             
-            # Celonis-style slate/blue edge transitions
-            color = "#a5d8ff" if val > (max_edge_val * 0.5) else "#ced4da"
+            # Celonis-style slate/blue/grey edge transitions with 3 tiers
+            if val > (max_edge_val * 0.7):
+                color = "#1c7ed6"  # High Flow (Strong blue)
+            elif val > (max_edge_val * 0.3):
+                color = "#74c0fc"  # Medium Flow (Soft blue)
+            else:
+                color = "#ced4da"  # Low Flow (Subtle grey)
             
             tooltip = f"<b>Transition:</b> {act_a} ➡️ {act_b}<br><b>Cases:</b> {val}"
             
