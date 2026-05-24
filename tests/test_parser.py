@@ -103,5 +103,16 @@ Case_2,Close Order,2026-05-02 10:00:00,Alice
         # Average waiting time after Create Order was (3600 + 3600) / 2 = 3600 seconds
         self.assertEqual(latencies["Create Order"], 3600.0)
 
+    def test_hybrid_loader_invalid_file(self):
+        """Test if the hybrid loader raises errors when loading completely invalid files."""
+        corrupted_data = StringIO("--- invalid content ---\n!!! random gibberish !!!")
+        with self.assertRaises(Exception):
+            load_and_clean_csv(
+                corrupted_data,
+                case_col="case_id",
+                activity_col="activity",
+                timestamp_col="timestamp"
+            )
+
 if __name__ == '__main__':
     unittest.main()
