@@ -308,9 +308,14 @@ if file_to_parse is not None:
                 max_days = case_durations_df['duration_days'].max()
                 med_days = case_durations_df['duration_days'].median()
                 
+                # SLA calculation
+                violations = case_durations_df[case_durations_df['duration_days'] > sla_target]
+                violation_count = len(violations)
+                violation_pct = (violation_count / total_cases) * 100 if total_cases > 0 else 0
+                
                 st.markdown(f"""
                     <div style="background-color: #f8f9fa; border:1px solid #e9ecef; border-radius:10px; padding:25px; height:100%; display:flex; flex-direction:column; justify-content:center;">
-                        <h4 style="margin-top:0; color:#2c3e50; font-size:1.1rem; border-bottom:2px solid #dee2e6; padding-bottom:8px; margin-bottom:15px;">⏱️ Cycle Statistics</h4>
+                        <h4 style="margin-top:0; color:#2c3e50; font-size:1.1rem; border-bottom:2px solid #dee2e6; padding-bottom:8px; margin-bottom:15px;">⏱️ Cycle & SLA Statistics</h4>
                         <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:0.95em;">
                             <span style="color:#868e96; font-weight:600;">Fastest Case:</span>
                             <span style="color:#2c3e50; font-weight:700;">{min_days:.2f} Days</span>
@@ -322,6 +327,16 @@ if file_to_parse is not None:
                         <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:0.95em;">
                             <span style="color:#868e96; font-weight:600;">Slowest Case:</span>
                             <span style="color:#2c3e50; font-weight:700; color:#fa5252;">{max_days:.2f} Days</span>
+                        </div>
+                        <div style="margin-top:10px; border-top:1px dashed #dee2e6; padding-top:10px;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:0.95em;">
+                                <span style="color:#868e96; font-weight:600;">SLA Limit:</span>
+                                <span style="color:#495057; font-weight:700;">{sla_target:.1f} Days</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; font-size:0.95em;">
+                                <span style="color:#868e96; font-weight:600;">SLA Violations:</span>
+                                <span style="color:#fa5252; font-weight:700;">{violation_count} ({violation_pct:.1f}%)</span>
+                            </div>
                         </div>
                     </div>
                 """, unsafe_allow_html=True)
