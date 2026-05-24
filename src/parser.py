@@ -47,7 +47,17 @@ def load_and_clean_csv(
     Returns:
         pd.DataFrame: Sorted, standardized event log dataframe.
     """
-    df = pd.read_csv(file_path_or_buffer)
+    # Support hybrid CSV/JSON parsing
+    if isinstance(file_path_or_buffer, str) and file_path_or_buffer.lower().endswith('.json'):
+        df = pd.read_json(file_path_or_buffer)
+    else:
+        try:
+            df = pd.read_csv(file_path_or_buffer)
+        except Exception:
+            if hasattr(file_path_or_buffer, 'seek'):
+                file_path_or_buffer.seek(0)
+            df = pd.read_json(file_path_or_buffer)
+            
     # Validate column mappings
     validate_csv_headers(df, case_col, activity_col, timestamp_col)
     
