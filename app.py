@@ -145,6 +145,16 @@ if file_to_parse is not None:
                 st.write(f"**Total Events:** {len(df)}")
                 st.write(f"**Date Range:** {df['time:timestamp'].min().strftime('%Y-%m-%d')} to {df['time:timestamp'].max().strftime('%Y-%m-%d')}")
                 st.write(f"**Average Steps/Case:** {len(df) / total_cases:.1f}")
+                st.divider()
+                # Standardized download option
+                csv_data = df.to_csv(index=False).encode('utf-8')
+                st.download_button(
+                    label="📥 Export Cleaned CSV",
+                    data=csv_data,
+                    file_name="standardized_event_log.csv",
+                    mime="text/csv",
+                    use_container_width=True
+                )
         
         # --- TITLE BLOCK ---
         st.markdown("<h1 style='margin-bottom: 5px;'>📊 Process Discovery & Variant Explorer</h1>", unsafe_allow_html=True)
