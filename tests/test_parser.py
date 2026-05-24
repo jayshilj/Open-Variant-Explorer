@@ -7,7 +7,7 @@ from io import StringIO
 # Append parent directory to path so we can import src modules
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from src.parser import load_and_clean_csv, extract_variants, compute_dfg_data, format_duration
+from src.parser import load_and_clean_csv, extract_variants, compute_dfg_data, format_duration, compute_activity_durations
 
 class TestParser(unittest.TestCase):
 
@@ -95,6 +95,13 @@ Case_2,Close Order,2026-05-02 10:00:00,Alice
         self.assertEqual(format_duration(120), "2.0m")
         self.assertEqual(format_duration(7200), "2.0h")
         self.assertEqual(format_duration(172800), "2.0d")
+
+    def test_compute_activity_durations(self):
+        """Test calculation of activity-level transition latency."""
+        latencies = compute_activity_durations(self.df)
+        self.assertIn("Create Order", latencies)
+        # Average waiting time after Create Order was (3600 + 3600) / 2 = 3600 seconds
+        self.assertEqual(latencies["Create Order"], 3600.0)
 
 if __name__ == '__main__':
     unittest.main()
