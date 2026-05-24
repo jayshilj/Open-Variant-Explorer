@@ -138,6 +138,14 @@ if file_to_parse is not None:
         case_durations_df = get_case_durations(df)
         avg_lead_time_days = case_durations_df['duration_days'].mean()
         
+        # Populate dynamic sidebar insights
+        with st.sidebar:
+            st.divider()
+            with st.expander("📊 Event Log Statistics", expanded=True):
+                st.write(f"**Total Events:** {len(df)}")
+                st.write(f"**Date Range:** {df['time:timestamp'].min().strftime('%Y-%m-%d')} to {df['time:timestamp'].max().strftime('%Y-%m-%d')}")
+                st.write(f"**Average Steps/Case:** {len(df) / total_cases:.1f}")
+        
         # --- TITLE BLOCK ---
         st.markdown("<h1 style='margin-bottom: 5px;'>📊 Process Discovery & Variant Explorer</h1>", unsafe_allow_html=True)
         st.markdown("<p style='color:#868e96; font-size: 1.1em; margin-bottom: 25px;'>Analyze operational deviations, discover process paths, and uncover execution bottlenecks.</p>", unsafe_allow_html=True)
