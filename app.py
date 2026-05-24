@@ -349,6 +349,9 @@ if file_to_parse is not None:
             display_durations['start_time'] = display_durations['start_time'].dt.strftime('%Y-%m-%d %H:%M:%S')
             display_durations['end_time'] = display_durations['end_time'].dt.strftime('%Y-%m-%d %H:%M:%S')
             display_durations['duration_days'] = display_durations['duration_days'].round(2)
+            display_durations['SLA Status'] = display_durations['duration_days'].apply(
+                lambda x: "🚨 Violation" if x > sla_target else "✅ Compliant"
+            )
             
             st.dataframe(
                 display_durations.rename(columns={
@@ -356,7 +359,8 @@ if file_to_parse is not None:
                     "start_time": "Process Start",
                     "end_time": "Process Complete",
                     "duration_days": "Duration (Days)",
-                    "activities_count": "Steps Count"
+                    "activities_count": "Steps Count",
+                    "SLA Status": "SLA Status"
                 }), 
                 hide_index=True,
                 width="stretch"
