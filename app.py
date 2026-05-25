@@ -73,7 +73,7 @@ with st.sidebar:
     st.markdown("<h2 style='margin:0; padding-top:5px; font-size:1.8em;'>Open-Variant</h2><div style='color:#868e96; font-size:0.85em; margin-top:-5px; font-weight:600; margin-bottom: 20px;'>Process Mining Dashboard</div>", unsafe_allow_html=True)
     
     st.subheader("📁 Event Log Ingestion")
-    data_source = st.radio("Select Data Source:", ["Use Sample O2C Log", "Upload CSV Log"])
+    data_source = st.radio("Select Data Source:", ["Use Sample O2C Log", "Use Sample Loan Log", "Upload CSV Log"])
     
     uploaded_file = None
     if data_source == "Upload CSV Log":
@@ -87,6 +87,16 @@ with st.sidebar:
     # Pre-load headers
     if data_source == "Use Sample O2C Log":
         sample_path = "datasets/sample_o2c.csv"
+        preview_df = pd.read_csv(sample_path, nrows=5)
+        headers = preview_df.columns.tolist()
+        
+        default_case = "case_id" if "case_id" in headers else headers[0]
+        default_act = "activity" if "activity" in headers else headers[0]
+        default_time = "timestamp" if "timestamp" in headers else headers[0]
+        
+        file_to_parse = sample_path
+    elif data_source == "Use Sample Loan Log":
+        sample_path = "datasets/sample_financial.csv"
         preview_df = pd.read_csv(sample_path, nrows=5)
         headers = preview_df.columns.tolist()
         
