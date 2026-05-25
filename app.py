@@ -376,6 +376,60 @@ if file_to_parse is not None:
                 hide_index=True,
                 width="stretch"
             )
+            
+        # MODULE 4: ACTIVITY ANALYSIS
+        with tab_activity:
+            st.subheader("📊 Activity Outbound Latency & Bottleneck Analysis")
+            st.markdown("Isolate which activity nodes trigger the longest operational delay before subsequent steps occur.")
+            
+            act_col1, act_col2 = st.columns([2, 1])
+            
+            with act_col1:
+                # Compute activity outbound durations
+                latencies = compute_activity_durations(df)
+                if latencies:
+                    # Convert to dataframe for plotting
+                    lat_df = pd.DataFrame([
+                        {"Activity": act, "Avg Latency (Hours)": duration / 3600.0}
+                        for act, duration in latencies.items()
+                    ]).sort_values(by="Avg Latency (Hours)", ascending=False)
+                    
+                    fig_lat = px.bar(
+                        lat_df,
+                        y="Activity",
+                        x="Avg Latency (Hours)",
+                        orientation="h",
+                        labels={"Avg Latency (Hours)": "Outbound Waiting Time (Hours)"},
+                        title="Average Outbound Latency by Activity Node",
+                        color="Avg Latency (Hours)",
+                        color_continuous_scale="Reds"
+                    )
+                    fig_lat.update_layout(
+                        paper_bgcolor="rgba(0,0,0,0)",
+                        plot_bgcolor="rgba(248,249,250,0.5)",
+                        margin=dict(l=20, r=20, t=40, b=20),
+                        height=380
+                    )
+                    st.plotly_chart(fig_lat, use_container_width=True)
+                else:
+                    st.info("No outbound activity transition latency data available.")
+                    
+            with act_col2:
+                # Activity frequencies detailed breakdown
+                st.markdown("""
+                    <div style="background-color: #f8f9fa; border:1px solid #e9ecef; border-radius:10px; padding:20px; height:100%;">
+                        <h4 style="margin-top:0; color:#2c3e50; font-size:1.1rem; border-bottom:2px solid #dee2e6; padding-bottom:8px; margin-bottom:12px;">📊 Frequency Analysis</h4>
+                        <p style="font-size:0.9em; color:#868e96; margin-bottom:15px;">Detailed breakdown of unique activities executed in this log.</p>
+                """, unsafe_allow_html=True)
+                
+                # Convert activity_freq to dataframe
+                act_df = pd.DataFrame([
+                    {"Activity": act, "Count": freq, "Percentage": f"{(freq / sum(activity_freq.values()))*100:.1f}%"}
+                    for act, freq in activity_freq.items()
+                ]).sort_values(by="Count", ascending=False)
+                
+                st.dataframe(act_df, hide_index=True, use_container_width=True)
+                st.markdown("</div>", unsafe_allow_html=True)
 
     except Exception as e:
         st.error(f"Failed to analyze event log. Details: {e}")
