@@ -152,11 +152,23 @@ if file_to_parse is not None:
                 min_value=min_date,
                 max_value=max_date
             )
+            min_steps = st.slider(
+                "Minimum Steps per Case:",
+                min_value=1,
+                max_value=15,
+                value=1,
+                step=1
+            )
             
         if len(date_range) == 2:
             start_d, end_d = date_range
             case_starts = df.groupby('case:concept:name')['time:timestamp'].min()
             valid_cases = case_starts[(case_starts.dt.date >= start_d) & (case_starts.dt.date <= end_d)].index
+            df = df[df['case:concept:name'].isin(valid_cases)]
+            
+        if min_steps > 1:
+            case_sizes = df.groupby('case:concept:name').size()
+            valid_cases = case_sizes[case_sizes >= min_steps].index
             df = df[df['case:concept:name'].isin(valid_cases)]
         
         # Calculate stats
