@@ -1,0 +1,25 @@
+case_id,activity,timestamp,user,amount
+Loan_01,Submit Application,2026-05-10 09:00:00,Alice,150000.00
+Loan_01,Verify Documents,2026-05-10 11:30:00,Bob,150000.00
+Loan_01,Assess Risk,2026-05-11 10:00:00,Charlie,150000.00
+Loan_01,Request Appraisal,2026-05-11 14:00:00,System,150000.00
+Loan_01,Approve Loan,2026-05-13 16:30:00,Diane,150000.00
+Loan_01,Disburse Funds,2026-05-14 09:00:00,System,150000.00
+Loan_02,Submit Application,2026-05-10 09:30:00,Alice,85000.00
+Loan_02,Verify Documents,2026-05-10 13:00:00,Bob,85000.00
+Loan_02,Assess Risk,2026-05-11 11:30:00,Charlie,85000.00
+Loan_02,Approve Loan,2026-05-12 15:00:00,Diane,85000.00
+Loan_02,Disburse Funds,2026-05-13 10:00:00,System,85000.00
+Loan_03,Submit Application,2026-05-10 10:00:00,Diane,320000.00
+Loan_03,Verify Documents,2026-05-10 15:30:00,Bob,320000.00
+Loan_03,Assess Risk,2026-05-12 09:00:00,Charlie,320000.00
+Loan_03,Decline Loan,2026-05-12 14:30:00,Diane,320000.00
+Loan_04,Submit Application,2026-05-11 09:00:00,Alice,12000.00
+Loan_04,Verify Documents,2026-05-11 10:30:00,Bob,12000.00
+Loan_04,Approve Loan,2026-05-11 14:00:00,Diane,12000.00
+Loan_04,Disburse Funds,2026-05-11 16:00:00,System,12000.00
+Loan_05,Submit Application,2026-05-11 09:30:00,Emma,240000.00
+Loan_05,Verify Documents,2026-05-11 13:30:00,Bob,240000.00
+Loan_05,Assess Risk,2026-05-12 10:00:00,Charlie,240000.00
+Loan_05,Request Appraisal,2026-05-12 15:00:00,System,240000.00
+Loan_05,Decline Loan,2026-05-15 11:00:00,Diane,240000.00
