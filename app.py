@@ -140,6 +140,25 @@ if file_to_parse is not None:
         # Load and clean
         df = load_and_clean_csv(file_to_parse, case_col, activity_col, timestamp_col)
         
+        # Reactive date filters in the sidebar
+        min_date = df['time:timestamp'].min().date()
+        max_date = df['time:timestamp'].max().date()
+        
+        with st.sidebar:
+            st.subheader("🔍 Case Scope Filters")
+            date_range = st.date_input(
+                "Case Start Date Range:",
+                value=(min_date, max_date),
+                min_value=min_date,
+                max_value=max_date
+            )
+            
+        if len(date_range) == 2:
+            start_d, end_d = date_range
+            case_starts = df.groupby('case:concept:name')['time:timestamp'].min()
+            valid_cases = case_starts[(case_starts.dt.date >= start_d) & (case_starts.dt.date <= end_d)].index
+            df = df[df['case:concept:name'].isin(valid_cases)]
+        
         # Calculate stats
         variants = extract_variants(df)
         total_cases = df['case:concept:name'].nunique()
