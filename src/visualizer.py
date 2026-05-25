@@ -9,7 +9,9 @@ def generate_dfg_network(
     dfg_freq: Dict[Tuple[str, str], int], 
     dfg_perf: Dict[Tuple[str, str], float], 
     activity_freq: Dict[str, int], 
-    metric: str = "frequency"
+    metric: str = "frequency",
+    gravity: int = -45,
+    spring_length: int = 150
 ) -> str:
     """
     Generate an interactive Directly-Follows Graph network using Pyvis.
@@ -19,6 +21,8 @@ def generate_dfg_network(
         dfg_perf: Dictionary of transitions and their average durations.
         activity_freq: Dictionary of activities and their frequencies.
         metric: "frequency" or "performance".
+        gravity: Force repulsion gravity value (negative).
+        spring_length: Connection distance value between nodes.
         
     Returns:
         str: HTML code for the rendered interactive graph.
@@ -35,9 +39,9 @@ def generate_dfg_network(
     
     # Well-balanced, highly-stable physics layout
     net.force_atlas_2based(
-        gravity=-45, 
+        gravity=gravity, 
         central_gravity=0.012, 
-        spring_length=150, 
+        spring_length=spring_length, 
         spring_strength=0.055, 
         damping=0.5, 
         overlap=0.8
