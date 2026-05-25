@@ -281,6 +281,14 @@ if file_to_parse is not None:
                     variant_options
                 )
                 
+            # Visual layout parameters
+            with st.expander("⚙️ Visual Layout Parameters"):
+                col_g, col_s = st.columns(2)
+                with col_g:
+                    gravity_val = st.slider("Node Repulsion Gravity:", min_value=-150, max_value=-10, value=-45, step=5)
+                with col_s:
+                    spring_val = st.slider("Connection Spring Distance:", min_value=50, max_value=300, value=150, step=10)
+                
             # Filter cases based on chosen variant
             filter_cases = None
             if selected_var_str != "Show All Variants (Full Process)":
@@ -296,7 +304,12 @@ if file_to_parse is not None:
             # Generate and Render Pyvis Map
             if activity_freq:
                 with st.spinner("Discovering process models..."):
-                    html_graph = generate_dfg_network(dfg_freq, dfg_perf, activity_freq, metric=metric_type)
+                    html_graph = generate_dfg_network(
+                        dfg_freq, dfg_perf, activity_freq, 
+                        metric=metric_type,
+                        gravity=gravity_val,
+                        spring_length=spring_val
+                    )
                     st.components.v1.html(html_graph, height=620, scrolling=False)
             else:
                 st.info("No transitions discovered for the selected filter.")
