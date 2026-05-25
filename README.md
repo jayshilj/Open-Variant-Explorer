@@ -16,6 +16,7 @@ Built with **Python**, **Streamlit**, and the industry-standard **PM4Py** engine
   * Toggle the DFG to display **Case Frequencies** (throughput volumes).
   * Toggle to display **Performance (Average / Median Durations)** to pinpoint bottlenecks.
 * **Physics-Based Graphs**: Fully interactive graph layouts with drag-and-drop nodes, zooming, and tooltips.
+* **⚙️ Dynamic Physics controls**: Collapsible sliders to customize node repulsion gravity and connection spring distance in real-time.
 
 ### 2. 🧬 Variant Explorer
 * **Path Sequencing**: Categorize and rank every unique sequence of activities (variants) present in the log.
@@ -24,8 +25,13 @@ Built with **Python**, **Streamlit**, and the industry-standard **PM4Py** engine
 
 ### 3. ⏱️ Lead Time & SLA Analytics
 * **Throughput Time Distribution**: Analyze cycle times across all cases with violin/histogram visualizations.
-* **Bottleneck Highlighter**: Automatically identify and flag transitions that take the longest time, enabling immediate actionable optimizations.
-* **Case Filtering**: Drill down into specific cases by activity inclusion, exclusion, or throughput duration.
+* **Customizable SLA Targets**: Adjustable SLA input slider reactively flags compliant vs violating case flows.
+* **SLA Compliance Donut Visuals**: High-level donut chart displays compliant case share percentages instantly.
+* **Bottleneck Ledger**: Interactive ledger lists all cases with custom status emoji badges (`🚨 Violation` vs `✅ Compliant`).
+
+### 4. 📊 Activity Outbound Latency (New!)
+* **Activity Waiting Times**: Discover average waiting/idle duration triggered immediately following each individual activity node.
+* **Operational Frequencies**: Detailed frequency distribution table sorting unique steps executed in the event log.
 
 ---
 
@@ -41,12 +47,17 @@ Built with **Python**, **Streamlit**, and the industry-standard **PM4Py** engine
 ```plaintext
 Open-Variant-Explorer/
 ├── app.py                 # Main Streamlit application entry point
+├── Makefile               # UNIX builder directives (run, test, clean)
+├── run_tests.ps1          # Windows automated PowerShell test runner
 ├── src/
 │   ├── parser.py          # Log parser and PM4Py aggregation pipelines
 │   └── visualizer.py      # Process map network rendering logic
 ├── tests/
-│   └── test_parser.py     # Unit tests for log parsing
+│   ├── __init__.py        # Python package definition
+│   └── test_parser.py     # Unit tests for log parsing & validators
 ├── datasets/              # Sample CSV/XES event logs for testing
+│   ├── sample_o2c.csv     # 105-case Order-to-Cash process
+│   └── sample_financial.csv # Financial loan approval process template
 ├── requirements.txt       # Project dependencies
 ├── .gitignore             # Git ignore patterns
 └── README.md              # Documentation
@@ -58,23 +69,26 @@ Open-Variant-Explorer/
 
 ### Prerequisites
 * Python 3.9+
-* Graphviz installed on your system (optional, for static DFG rendering)
 
-### Step 1: Clone and Set Up Virtual Environment
+### Setup and Running with Makefile (UNIX/macOS)
 ```bash
-git init
-python -m venv venv
-.\venv\Scripts\activate
+# Run the test suite
+make test
+
+# Start the Streamlit application
+make run
+
+# Clean cache directories
+make clean
 ```
 
-### Step 2: Install Dependencies
-```bash
-pip install -r requirements.txt
-```
+### Setup and Running with PowerShell (Windows)
+```powershell
+# Run the test suite
+.\run_tests.ps1
 
-### Step 3: Run the Application
-```bash
-streamlit run app.py
+# Run the Streamlit application
+.\venv\Scripts\streamlit run app.py
 ```
 
 ---
