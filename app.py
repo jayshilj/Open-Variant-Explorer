@@ -216,10 +216,11 @@ if file_to_parse is not None:
         st.markdown("<br>", unsafe_allow_html=True)
         
         # --- TABS FOR MODULES ---
-        tab_discovery, tab_variant, tab_lead_time = st.tabs([
+        tab_discovery, tab_variant, tab_lead_time, tab_activity = st.tabs([
             "📡 Process Map Explorer", 
             "🧬 Variant Explorer", 
-            "⏱️ SLA & Lead Times"
+            "⏱️ SLA & Lead Times",
+            "📊 Activity Analysis"
         ])
         
         # MODULE 1: PROCESS MAP DISCOVERY
