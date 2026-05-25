@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from src.parser import load_and_clean_csv, extract_variants, compute_dfg_data, get_case_durations
+from src.parser import load_and_clean_csv, extract_variants, compute_dfg_data, get_case_durations, compute_activity_durations
 from src.visualizer import generate_dfg_network
 
 # --- PAGE SETUP ---
