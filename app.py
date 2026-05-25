@@ -171,6 +171,10 @@ if file_to_parse is not None:
             valid_cases = case_sizes[case_sizes >= min_steps].index
             df = df[df['case:concept:name'].isin(valid_cases)]
         
+        if df.empty:
+            st.warning("⚠️ No cases match the selected filter criteria. Please broaden your scope filters in the sidebar!")
+            st.stop()
+            
         # Calculate stats
         variants = extract_variants(df)
         total_cases = df['case:concept:name'].nunique()
