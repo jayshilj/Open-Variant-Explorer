@@ -400,6 +400,29 @@ if file_to_parse is not None:
                     </div>
                 """, unsafe_allow_html=True)
                 
+                st.write("")
+                # SLA Donut Chart
+                compliance_df = pd.DataFrame([
+                    {"Status": "Compliant", "Count": total_cases - violation_count},
+                    {"Status": "Violating", "Count": violation_count}
+                ])
+                fig_donut = px.pie(
+                    compliance_df,
+                    names="Status",
+                    values="Count",
+                    hole=0.4,
+                    color="Status",
+                    color_discrete_map={"Compliant": "#2f9e44", "Violating": "#fa5252"},
+                    title="SLA Compliance Distribution"
+                )
+                fig_donut.update_layout(
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    margin=dict(l=10, r=10, t=40, b=10),
+                    height=200,
+                    showlegend=True
+                )
+                st.plotly_chart(fig_donut, use_container_width=True)
+                
             st.divider()
             
             st.subheader("📋 Case Detail Ledger")
