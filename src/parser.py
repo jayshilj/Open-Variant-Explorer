@@ -279,3 +279,21 @@ def compute_activity_durations(df: pd.DataFrame) -> Dict[str, float]:
         return {}
     df_trans = pd.DataFrame(transition_times)
     return df_trans.groupby('activity')['duration'].mean().to_dict()
+
+def compute_case_step_stats(df: pd.DataFrame) -> Dict[str, Union[int, float]]:
+    """
+    Calculate statistical metrics of steps per case.
+    Returns:
+        Dict with keys: "min", "max", "median", "mean", "std"
+    """
+    if df.empty:
+        return {"min": 0, "max": 0, "median": 0.0, "mean": 0.0, "std": 0.0}
+    
+    case_sizes = df.groupby('case:concept:name').size()
+    return {
+        "min": int(case_sizes.min()),
+        "max": int(case_sizes.max()),
+        "median": float(case_sizes.median()),
+        "mean": float(case_sizes.mean()),
+        "std": float(case_sizes.std()) if len(case_sizes) > 1 else 0.0
+    }
