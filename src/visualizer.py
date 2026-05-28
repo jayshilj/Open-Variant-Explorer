@@ -62,16 +62,19 @@ def generate_dfg_network(
         # Build node title (tooltip)
         tooltip = f"<b>Activity:</b> {act}<br><b>Occurrences:</b> {freq} ({freq_pct:.1f}%)"
         
-        # Aesthetic colors (Celonis-inspired sleek deep-blue gradients)
+        # Aesthetic colors (Celonis-inspired sleek deep-blue gradients with high-contrast text)
         if freq > (max_freq * 0.7):
-            bg_color = "#1f3a60"  # Deep Royal Navy
-            border_color = "#0f1a30"
+            bg_color = "#1a365d"  # Deep Royal Navy (High Flow)
+            border_color = "#3182ce"
+            font_color = "#ffffff"
         elif freq > (max_freq * 0.3):
-            bg_color = "#3b5bdb"  # Indigo Blue
-            border_color = "#1c7ed6"
+            bg_color = "#2b6cb0"  # Indigo Blue (Medium Flow)
+            border_color = "#63b3ed"
+            font_color = "#ffffff"
         else:
-            bg_color = "#74c0fc"  # Sky Blue
-            border_color = "#3b5bdb"
+            bg_color = "#edf2f7"  # Light Sky / Off-White (Low Flow)
+            border_color = "#cbd5e0"
+            font_color = "#2d3748"
         
         net.add_node(
             act,
@@ -82,7 +85,7 @@ def generate_dfg_network(
             color={"background": bg_color, "border": border_color,
                    "highlight": {"background": "#12b886", "border": "#0ca678"},
                    "hover": {"background": "#22b8cf", "border": "#15aabf"}},
-            font={"size": 12, "face": "Segoe UI, sans-serif", "color": "#1a1b1f", "bold": True},
+            font={"size": 12, "face": "Segoe UI, sans-serif", "color": font_color, "bold": True},
             borderWidth=2,
             shadow={"enabled": True, "color": "rgba(0,0,0,0.08)", "size": 4, "x": 2, "y": 2}
         )
@@ -99,11 +102,11 @@ def generate_dfg_network(
             
             # Celonis-style slate/blue/grey edge transitions with 3 tiers
             if val > (max_edge_val * 0.7):
-                color = "#1c7ed6"  # High Flow (Strong blue)
+                color = "#2b6cb0"  # High Flow (Robust Navy Slate)
             elif val > (max_edge_val * 0.3):
-                color = "#74c0fc"  # Medium Flow (Soft blue)
+                color = "#4299e1"  # Medium Flow (Vibrant Blue)
             else:
-                color = "#ced4da"  # Low Flow (Subtle grey)
+                color = "#cbd5e0"  # Low Flow (Neutral Grey)
             
             tooltip = f"<b>Transition:</b> {act_a} ➡️ {act_b}<br><b>Cases:</b> {val}"
             
@@ -112,7 +115,7 @@ def generate_dfg_network(
                 label=f" {val}",
                 title=tooltip,
                 width=width,
-                color={"color": color, "highlight": "#228be6", "hover": "#228be6"},
+                color={"color": color, "highlight": "#2b6cb0", "hover": "#2b6cb0"},
                 arrows={"to": {"enabled": True, "scaleFactor": 0.55}},
                 smooth={"type": "dynamic"}
             )
