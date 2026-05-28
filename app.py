@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from src.parser import load_and_clean_csv, extract_variants, compute_dfg_data, get_case_durations, compute_activity_durations
+from src.parser import load_and_clean_csv, extract_variants, compute_dfg_data, get_case_durations, compute_activity_durations, compute_case_step_stats
 from src.visualizer import generate_dfg_network
 
 # --- PAGE SETUP ---
@@ -196,6 +196,7 @@ if file_to_parse is not None:
         
         case_durations_df = get_case_durations(df)
         avg_lead_time_days = case_durations_df['duration_days'].mean()
+        step_stats = compute_case_step_stats(df)
         
         # Populate dynamic sidebar insights
         with st.sidebar:
@@ -203,7 +204,10 @@ if file_to_parse is not None:
             with st.expander("📊 Event Log Statistics", expanded=True):
                 st.write(f"**Total Events:** {len(df)}")
                 st.write(f"**Date Range:** {df['time:timestamp'].min().strftime('%Y-%m-%d')} to {df['time:timestamp'].max().strftime('%Y-%m-%d')}")
-                st.write(f"**Average Steps/Case:** {len(df) / total_cases:.1f}")
+                st.write(f"**Steps per Case:**")
+                st.write(f"• *Average:* {step_stats['mean']:.1f}")
+                st.write(f"• *Median:* {step_stats['median']:.1f}")
+                st.write(f"• *Min / Max:* {step_stats['min']} to {step_stats['max']}")
                 st.divider()
                 # Standardized download option
                 csv_data = df.to_csv(index=False).encode('utf-8')
