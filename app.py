@@ -13,56 +13,75 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- CUSTOM CSS FOR SLEEK MODERN DESIGN (Celonis Inspired) ---
+# --- CUSTOM CSS FOR SLEEK MODERN DESIGN (Celonis Inspired Premium Theme) ---
 st.markdown("""
     <style>
     .metric-container {
-        background-color: #ffffff;
-        border: 1px solid #e9ecef;
-        border-radius: 10px;
-        padding: 20px;
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(233, 236, 239, 0.5);
+        border-radius: 12px;
+        padding: 22px;
         text-align: center;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
-        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.03);
+        transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.3s ease, border-color 0.3s ease;
     }
     .metric-container:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.08);
+        border: 1px solid rgba(59, 91, 219, 0.2);
     }
     .metric-value {
-        font-size: 32px;
-        font-weight: 700;
-        color: #3b5bdb;
+        font-size: 34px;
+        font-weight: 800;
+        background: linear-gradient(135deg, #3b5bdb 0%, #1c7ed6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
         margin-bottom: 2px;
     }
     .metric-label {
-        font-size: 13px;
-        font-weight: 600;
+        font-size: 12px;
+        font-weight: 700;
         color: #868e96;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 1px;
     }
     
     .variant-card {
-        background-color: #ffffff;
-        border: 1px solid #e9ecef;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(233, 236, 239, 0.6);
         border-left: 5px solid #3b5bdb;
-        border-radius: 8px;
-        padding: 15px;
-        margin-bottom: 12px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.01);
+        border-radius: 10px;
+        padding: 18px;
+        margin-bottom: 14px;
+        box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.02);
+        transition: transform 0.2s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.2s ease;
+    }
+    .variant-card:hover {
+        transform: translateX(6px);
+        box-shadow: 0 6px 20px 0 rgba(31, 38, 135, 0.05);
     }
     .activity-badge {
         display: inline-block;
-        background-color: #f1f3f5;
+        background: rgba(241, 243, 245, 0.8);
         color: #495057;
         font-weight: 600;
         font-size: 12px;
-        padding: 4px 10px;
+        padding: 5px 12px;
         border-radius: 20px;
-        margin-right: 5px;
-        margin-bottom: 5px;
-        border: 1px solid #dee2e6;
+        margin-right: 6px;
+        margin-bottom: 6px;
+        border: 1px solid rgba(222, 226, 230, 0.8);
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+    .activity-badge:hover {
+        background-color: #e8f0fe;
+        border-color: #3b5bdb;
+        color: #3b5bdb;
     }
     </style>
 """, unsafe_allow_html=True)
