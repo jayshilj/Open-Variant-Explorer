@@ -7,7 +7,7 @@ from io import StringIO
 # Append parent directory to path so we can import src modules
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from src.parser import load_and_clean_csv, extract_variants, compute_dfg_data, format_duration, compute_activity_durations
+from src.parser import load_and_clean_csv, extract_variants, compute_dfg_data, format_duration, compute_activity_durations, compute_case_step_stats
 
 class TestParser(unittest.TestCase):
 
@@ -148,6 +148,15 @@ Case_2,Close Order,2026-05-02 10:00:00,Alice
                 activity_col="activity",
                 timestamp_col="timestamp"
             )
+
+    def test_compute_case_step_stats(self):
+        """Test calculation of case step statistics (min, max, median, mean, std)."""
+        stats = compute_case_step_stats(self.df)
+        self.assertEqual(stats["min"], 2) # Case 2 has 2 events
+        self.assertEqual(stats["max"], 3) # Case 1 has 3 events
+        self.assertEqual(stats["median"], 2.5)
+        self.assertEqual(stats["mean"], 2.5)
+        self.assertAlmostEqual(stats["std"], 0.70710678)
 
 if __name__ == '__main__':
     unittest.main()
