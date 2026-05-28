@@ -63,6 +63,41 @@ Case_2,Close Order,2026-05-02 10:00:00,Alice
         self.assertEqual(df_json.iloc[0]['concept:name'], 'A')
         self.assertEqual(df_json.iloc[1]['concept:name'], 'B')
 
+    def test_load_and_clean_xes(self):
+        """Test if XES parser correctly loads, standardizes, and parses XML XES content."""
+        xes_data = """<?xml version="1.0" encoding="UTF-8" ?>
+<log xes.version="1.0" xes.features="nested-attributes" openxes.version="1.0RC7">
+	<extension name="Concept" prefix="concept" uri="http://www.xes-standard.org/concept.extension"/>
+	<extension name="Time" prefix="time" uri="http://www.xes-standard.org/time.extension"/>
+	<trace>
+		<string key="concept:name" value="Case_XES_1"/>
+		<event>
+			<string key="concept:name" value="Create Order"/>
+			<date key="time:timestamp" value="2026-05-01T09:00:00.000+00:00"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Close Order"/>
+			<date key="time:timestamp" value="2026-05-01T10:00:00.000+00:00"/>
+		</event>
+	</trace>
+</log>
+"""
+        import io
+        buffer = io.BytesIO(xes_data.encode('utf-8'))
+        # Give a mock name property to mimic file uploader
+        buffer.name = "mock_file.xes"
+        
+        df_xes = load_and_clean_csv(
+            buffer,
+            case_col="case_id",
+            activity_col="activity",
+            timestamp_col="timestamp"
+        )
+        self.assertEqual(len(df_xes), 2)
+        self.assertEqual(df_xes.iloc[0]['case:concept:name'], 'Case_XES_1')
+        self.assertEqual(df_xes.iloc[0]['concept:name'], 'Create Order')
+        self.assertEqual(df_xes.iloc[1]['concept:name'], 'Close Order')
+
     def test_extract_variants(self):
         """Test if unique process variants are correctly sequenced and ranked."""
         variants = extract_variants(self.df)
