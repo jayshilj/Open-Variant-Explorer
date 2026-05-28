@@ -73,11 +73,11 @@ with st.sidebar:
     st.markdown("<h2 style='margin:0; padding-top:5px; font-size:1.8em;'>Open-Variant</h2><div style='color:#868e96; font-size:0.85em; margin-top:-5px; font-weight:600; margin-bottom: 20px;'>Process Mining Dashboard</div>", unsafe_allow_html=True)
     
     st.subheader("📁 Event Log Ingestion")
-    data_source = st.radio("Select Data Source:", ["Use Sample O2C Log", "Use Sample Loan Log", "Upload CSV Log"])
+    data_source = st.radio("Select Data Source:", ["Use Sample O2C Log", "Use Sample Loan Log", "Upload Log File (CSV, JSON, XES)"])
     
     uploaded_file = None
-    if data_source == "Upload CSV Log":
-        uploaded_file = st.file_uploader("Upload CSV Event Log:", type=["csv"])
+    if data_source == "Upload Log File (CSV, JSON, XES)":
+        uploaded_file = st.file_uploader("Upload Event Log File:", type=["csv", "json", "xes", "xes.gz"])
         
     st.divider()
     
@@ -107,16 +107,30 @@ with st.sidebar:
         file_to_parse = sample_path
     else:
         if uploaded_file is not None:
-            preview_df = pd.read_csv(uploaded_file, nrows=5)
-            headers = preview_df.columns.tolist()
+            if uploaded_file.name.lower().endswith(('.xes', '.xes.gz')):
+                headers = ["case:concept:name", "concept:name", "time:timestamp"]
+            elif uploaded_file.name.lower().endswith('.json'):
+                try:
+                    preview_df = pd.read_json(uploaded_file)
+                    headers = preview_df.columns.tolist()
+                except Exception:
+                    headers = ["No Columns Found"]
+                if hasattr(uploaded_file, 'seek'):
+                    uploaded_file.seek(0)
+            else:
+                try:
+                    preview_df = pd.read_csv(uploaded_file, nrows=5)
+                    headers = preview_df.columns.tolist()
+                except Exception:
+                    headers = ["No Columns Found"]
+                if hasattr(uploaded_file, 'seek'):
+                    uploaded_file.seek(0)
             
-            default_case = headers[0]
-            default_act = headers[1] if len(headers) > 1 else headers[0]
-            default_time = headers[2] if len(headers) > 2 else headers[0]
+            default_case = "case:concept:name" if "case:concept:name" in headers else headers[0]
+            default_act = "concept:name" if "concept:name" in headers else (headers[1] if len(headers) > 1 else headers[0])
+            default_time = "time:timestamp" if "time:timestamp" in headers else (headers[2] if len(headers) > 2 else headers[0])
             
             file_to_parse = uploaded_file
-            # Reset buffer pointer for full read later
-            uploaded_file.seek(0)
         else:
             headers = ["No File Loaded"]
             default_case = default_act = default_time = "No File Loaded"
