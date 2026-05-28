@@ -4,6 +4,8 @@ from pm4py.objects.log.util import dataframe_utils
 from datetime import timedelta
 from typing import Union, List, Dict, Tuple, Optional, Any
 import io
+import os
+import tempfile
 
 def validate_csv_headers(
     df: pd.DataFrame, 
@@ -47,17 +49,58 @@ def load_and_clean_csv(
     Returns:
         pd.DataFrame: Sorted, standardized event log dataframe.
     """
-    # Support hybrid CSV/JSON parsing with robust detection
+    # Support hybrid CSV/JSON/XES parsing with robust detection
     df = None
-    if isinstance(file_path_or_buffer, str) and file_path_or_buffer.lower().endswith('.json'):
+    is_xes = False
+    
+    if isinstance(file_path_or_buffer, str) and (file_path_or_buffer.lower().endswith('.xes') or file_path_or_buffer.lower().endswith('.xes.gz')):
+        is_xes = True
+    elif hasattr(file_path_or_buffer, 'name') and isinstance(file_path_or_buffer.name, str) and (file_path_or_buffer.name.lower().endswith('.xes') or file_path_or_buffer.name.lower().endswith('.xes.gz')):
+        is_xes = True
+
+    if is_xes:
+        if not isinstance(file_path_or_buffer, str):
+            suffix = ".xes.gz" if file_path_or_buffer.name.lower().endswith('.gz') else ".xes"
+            # Read current position, write to temp file
+            if hasattr(file_path_or_buffer, 'seek'):
+                file_path_or_buffer.seek(0)
+            content = file_path_or_buffer.read()
+            with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
+                if isinstance(content, str):
+                    content = content.encode('utf-8')
+                tmp.write(content)
+                tmp_path = tmp.name
+            try:
+                df = pm4py.read_xes(tmp_path)
+            finally:
+                try:
+                    os.remove(tmp_path)
+                except OSError:
+                    pass
+        else:
+            df = pm4py.read_xes(file_path_or_buffer)
+            
+        # Map standard XES columns back to mapped names if needed
+        current_cols = df.columns.tolist()
+        if case_col not in current_cols and 'case:concept:name' in current_cols:
+            df = df.rename(columns={'case:concept:name': case_col})
+        if activity_col not in current_cols and 'concept:name' in current_cols:
+            df = df.rename(columns={'concept:name': activity_col})
+        if timestamp_col not in current_cols and 'time:timestamp' in current_cols:
+            df = df.rename(columns={'time:timestamp': timestamp_col})
+    elif isinstance(file_path_or_buffer, str) and file_path_or_buffer.lower().endswith('.json'):
         df = pd.read_json(file_path_or_buffer)
     else:
         # Check if the buffer content looks like JSON
         looks_like_json = False
         if hasattr(file_path_or_buffer, 'read'):
             try:
+                if hasattr(file_path_or_buffer, 'seek'):
+                    file_path_or_buffer.seek(0)
                 lead_chars = file_path_or_buffer.read(50).strip()
                 file_path_or_buffer.seek(0)
+                if isinstance(lead_chars, bytes):
+                    lead_chars = lead_chars.decode('utf-8', errors='ignore')
                 if lead_chars.startswith(('[', '{')):
                     looks_like_json = True
             except Exception:
