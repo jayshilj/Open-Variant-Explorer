@@ -33,6 +33,10 @@ Built with **Python**, **Streamlit**, and the industry-standard **PM4Py** engine
 * **Activity Waiting Times**: Discover average waiting/idle duration triggered immediately following each individual activity node.
 * **Operational Frequencies**: Detailed frequency distribution table sorting unique steps executed in the event log.
 
+### 5. 📥 Multi-Format Log Ingestion (XML XES, JSON, CSV)
+* **Standard-Compliant Ingestion**: Native support for industrial-standard XML-based XES (`.xes` and compressed `.xes.gz`) event logs using robust decompressing parsers.
+* **Case Step Statistical Auditing**: Dynamic computation of minimum, maximum, median, mean, and standard deviation step frequencies per case, reactively formatted in the uploader dashboard.
+
 ---
 
 ## 🛠️ Tech Stack
