@@ -7,7 +7,7 @@ from io import StringIO
 # Append parent directory to path so we can import src modules
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from src.parser import load_and_clean_csv, extract_variants, compute_dfg_data, format_duration, compute_activity_durations, compute_case_step_stats
+from src.parser import load_and_clean_csv, extract_variants, compute_dfg_data, format_duration, compute_activity_durations, compute_case_step_stats, get_case_sequences
 
 class TestParser(unittest.TestCase):
 
@@ -157,6 +157,13 @@ Case_2,Close Order,2026-05-02 10:00:00,Alice
         self.assertEqual(stats["median"], 2.5)
         self.assertEqual(stats["mean"], 2.5)
         self.assertAlmostEqual(stats["std"], 0.70710678)
+
+    def test_get_case_sequences(self):
+        """Test if the case sequences are extracted correctly from log."""
+        sequences = get_case_sequences(self.df)
+        self.assertEqual(len(sequences), 2)
+        self.assertEqual(sequences["Case_1"], ["Create Order", "Approve Credit", "Close Order"])
+        self.assertEqual(sequences["Case_2"], ["Create Order", "Close Order"])
 
 if __name__ == '__main__':
     unittest.main()
