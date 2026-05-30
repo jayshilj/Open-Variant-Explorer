@@ -84,6 +84,14 @@ st.markdown("""
         border-color: #3b5bdb;
         color: #3b5bdb;
     }
+    .reference-info-card {
+        background: rgba(248, 249, 250, 0.9);
+        border: 1px solid rgba(222, 226, 230, 0.7);
+        border-left: 5px solid #1c7ed6;
+        border-radius: 8px;
+        padding: 15px;
+        margin-top: 15px;
+    }
     </style>
 """, unsafe_allow_html=True)
 
