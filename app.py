@@ -579,6 +579,47 @@ if file_to_parse is not None:
                         st.success(f"Parsed Reference Path: `{' ➡️ '.join(reference_path)}`")
                     else:
                         st.warning("Please enter a valid comma-separated path to activate Conformance Auditing.")
+            
+            # Show analysis results if reference path is available
+            if reference_path:
+                case_sequences = get_case_sequences(df)
+                conformance_res = compute_conformance_suite(case_sequences, reference_path)
+                
+                # --- METRICS ROW ---
+                st.write("<br>", unsafe_allow_html=True)
+                cm1, cm2, cm3, cm4 = st.columns(4)
+                
+                with cm1:
+                    st.markdown(f"""
+                        <div class="metric-container">
+                            <div class="metric-value">{conformance_res['compliance_rate']:.1f}%</div>
+                            <div class="metric-label">Compliance Rate (Exact)</div>
+                        </div>
+                    """, unsafe_allow_html=True)
+                    
+                with cm2:
+                    st.markdown(f"""
+                        <div class="metric-container">
+                            <div class="metric-value">{conformance_res['avg_fitness'] * 100:.1f}%</div>
+                            <div class="metric-label">Average Fitness Score</div>
+                        </div>
+                    """, unsafe_allow_html=True)
+                    
+                with cm3:
+                    st.markdown(f"""
+                        <div class="metric-container">
+                            <div class="metric-value">{conformance_res['total_cases'] - conformance_res['violating_cases_count']}</div>
+                            <div class="metric-label">Conforming Cases</div>
+                        </div>
+                    """, unsafe_allow_html=True)
+                    
+                with cm4:
+                    st.markdown(f"""
+                        <div class="metric-container" style="border-left: 5px solid #fa5252;">
+                            <div class="metric-value" style="color: #fa5252; background: none; -webkit-text-fill-color: #fa5252;">{conformance_res['violating_cases_count']}</div>
+                            <div class="metric-label">Deviating Cases</div>
+                        </div>
+                    """, unsafe_allow_html=True)
 
     except Exception as e:
         st.error(f"Failed to analyze event log. Details: {e}")
