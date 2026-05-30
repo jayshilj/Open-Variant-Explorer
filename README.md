@@ -37,6 +37,11 @@ Built with **Python**, **Streamlit**, and the industry-standard **PM4Py** engine
 * **Standard-Compliant Ingestion**: Native support for industrial-standard XML-based XES (`.xes` and compressed `.xes.gz`) event logs using robust decompressing parsers.
 * **Case Step Statistical Auditing**: Dynamic computation of minimum, maximum, median, mean, and standard deviation step frequencies per case, reactively formatted in the uploader dashboard.
 
+### 6. ⚖️ Conformance Auditing & Compliance Checking (New!)
+* **Exact and Alignment Matching**: Standard compliance rate tracking and normalized alignment fitness score computation (using custom Levenshtein dynamic programming alignment).
+* **Operational Deviation Logging**: Precise, step-by-step reporting of missing steps, unexpected steps, and out-of-order sequence steps.
+* **Audit Ledger and Distribution**: Interactive fitness distribution charting and a prioritized audit ledger sorting cases from highest violation to lowest to isolate process bottlenecks.
+
 ---
 
 ## 🛠️ Tech Stack
