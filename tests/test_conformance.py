@@ -5,7 +5,7 @@ import os
 # Append parent directory to path so we can import src modules
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from src.conformance import check_exact_match, calculate_alignment_fitness, analyze_deviations
+from src.conformance import check_exact_match, calculate_alignment_fitness, analyze_deviations, compute_conformance_suite
 
 class TestConformance(unittest.TestCase):
 
@@ -47,6 +47,26 @@ class TestConformance(unittest.TestCase):
             analyze_deviations(["B", "A", "C"], ref),
             ["Out of Order: 'B' executed before 'A'"]
         )
+
+    def test_compute_conformance_suite(self):
+        ref = ["A", "B", "C"]
+        cases = {
+            "case1": ["A", "B", "C"],
+            "case2": ["A", "C"],
+            "case3": ["B", "A", "C"]
+        }
+        res = compute_conformance_suite(cases, ref)
+        
+        # Verify stats
+        self.assertEqual(res["total_cases"], 3)
+        self.assertEqual(res["violating_cases_count"], 2)
+        self.assertAlmostEqual(res["avg_fitness"], (1.0 + 2/3 + 1/3) / 3)
+        self.assertAlmostEqual(res["compliance_rate"], 1/3 * 100)
+        
+        # Verify case results
+        self.assertTrue(res["case_results"]["case1"]["is_exact"])
+        self.assertFalse(res["case_results"]["case2"]["is_exact"])
+        self.assertEqual(res["case_results"]["case2"]["deviations"], ["Missing: 'B'"])
 
 if __name__ == '__main__':
     unittest.main()
