@@ -545,6 +545,40 @@ if file_to_parse is not None:
         with tab_conformance:
             st.subheader("⚖️ Conformance Auditing & Compliance Checking")
             st.markdown("Audit operational process paths against a reference target sequence (Happy Path or custom defined) to measure alignment fitness and identify specific structural deviations.")
+            
+            # Interactive Reference Model Selector
+            conf_c1, conf_c2 = st.columns([2, 3])
+            
+            with conf_c1:
+                st.write("#### 🎯 Define Target Reference Process")
+                ref_method = st.radio(
+                    "Choose Reference Model Source:",
+                    ["Use Happy Path (Variant #1)", "Use Another Process Variant", "Define Custom Reference Path"],
+                    key="conformance_ref_radio"
+                )
+                
+                reference_path = []
+                if ref_method == "Use Happy Path (Variant #1)":
+                    if variants:
+                        reference_path = variants[0]["activities"]
+                        st.success(f"Selected Happy Path (Variant #1): `{' ➡️ '.join(reference_path)}`")
+                elif ref_method == "Use Another Process Variant":
+                    variant_choices = [f"Variant #{v['id']} ({v['case_count']} cases - {v['frequency']*100:.1f}%)" for v in variants]
+                    selected_var_str = st.selectbox("Select Variant to use as Reference:", variant_choices)
+                    var_id = int(selected_var_str.split(" ")[1].replace("#", ""))
+                    matched_var = next(v for v in variants if v["id"] == var_id)
+                    reference_path = matched_var["activities"]
+                    st.success(f"Selected Variant #{var_id}: `{' ➡️ '.join(reference_path)}`")
+                else:
+                    custom_path_str = st.text_input(
+                        "Enter Custom Reference Path (comma-separated):",
+                        placeholder="Create Order, Approve Credit, Close Order"
+                    )
+                    reference_path = parse_custom_reference_path(custom_path_str)
+                    if reference_path:
+                        st.success(f"Parsed Reference Path: `{' ➡️ '.join(reference_path)}`")
+                    else:
+                        st.warning("Please enter a valid comma-separated path to activate Conformance Auditing.")
 
     except Exception as e:
         st.error(f"Failed to analyze event log. Details: {e}")
