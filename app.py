@@ -620,6 +620,33 @@ if file_to_parse is not None:
                             <div class="metric-label">Deviating Cases</div>
                         </div>
                     """, unsafe_allow_html=True)
+                
+                # --- PLOTLY FITNESS DISTRIBUTION ---
+                st.write("<br>", unsafe_allow_html=True)
+                
+                # We build a DataFrame with fitness scores
+                fitness_df = pd.DataFrame([
+                    {"Case ID": cid, "Fitness (%)": detail["fitness"] * 100}
+                    for cid, detail in conformance_res["case_results"].items()
+                ])
+                
+                # Render fitness score histogram
+                fig_fit = px.histogram(
+                    fitness_df,
+                    x="Fitness (%)",
+                    nbins=10,
+                    range_x=[0, 100],
+                    labels={"Fitness (%)": "Alignment Fitness Score (%)", "count": "Case Count"},
+                    title="Alignment Fitness Score Distribution",
+                    color_discrete_sequence=["#3b5bdb"]
+                )
+                fig_fit.update_layout(
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    plot_bgcolor="rgba(248,249,250,0.5)",
+                    margin=dict(l=20, r=20, t=40, b=20),
+                    height=300
+                )
+                st.plotly_chart(fig_fit, use_container_width=True)
 
     except Exception as e:
         st.error(f"Failed to analyze event log. Details: {e}")
