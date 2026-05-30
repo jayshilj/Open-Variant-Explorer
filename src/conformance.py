@@ -89,3 +89,47 @@ def analyze_deviations(case_path: List[str], reference_path: List[str]) -> List[
                 deviations.append(f"Out of Order: '{act_curr}' executed before '{act_next}'")
             
     return deviations
+
+def compute_conformance_suite(case_sequences: Dict[str, List[str]], reference_path: List[str]) -> Dict[str, Any]:
+    """
+    Execute a comprehensive conformance audit across all case sequences against a reference path.
+    Returns:
+        Dict containing:
+            - "case_results": Dict mapping case_id to details (fitness, is_exact, deviations)
+            - "compliance_rate": float (percentage of exact matches)
+            - "avg_fitness": float (average fitness score)
+            - "total_cases": int
+            - "violating_cases_count": int
+    """
+    case_results = {}
+    total_cases = len(case_sequences)
+    exact_matches = 0
+    total_fitness = 0.0
+    violating_cases = 0
+    
+    for case_id, path in case_sequences.items():
+        is_exact = check_exact_match(path, reference_path)
+        fitness = calculate_alignment_fitness(path, reference_path)
+        deviations = analyze_deviations(path, reference_path)
+        
+        if is_exact:
+            exact_matches += 1
+        if deviations:
+            violating_cases += 1
+            
+        total_fitness += fitness
+        
+        case_results[case_id] = {
+            "path": path,
+            "fitness": fitness,
+            "is_exact": is_exact,
+            "deviations": deviations
+        }
+        
+    return {
+        "case_results": case_results,
+        "compliance_rate": (exact_matches / total_cases * 100) if total_cases > 0 else 100.0,
+        "avg_fitness": (total_fitness / total_cases) if total_cases > 0 else 1.0,
+        "total_cases": total_cases,
+        "violating_cases_count": violating_cases
+    }
