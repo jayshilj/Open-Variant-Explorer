@@ -136,6 +136,18 @@ def load_and_clean_csv(
     df = df.sort_values(by=['case:concept:name', 'time:timestamp'])
     return df
 
+def get_case_sequences(df: pd.DataFrame) -> Dict[str, List[str]]:
+    """
+    Extract the sequence of activities for each case in the event log.
+    Returns:
+        Dict[str, List[str]]: Mapping of case identifier to activity sequences.
+    """
+    case_groups = df.groupby('case:concept:name')
+    sequences = {}
+    for case_id, group in case_groups:
+        sequences[str(case_id)] = group['concept:name'].tolist()
+    return sequences
+
 def extract_variants(df: pd.DataFrame) -> List[Dict[str, Any]]:
     """
     Extract and calculate process variants (sequences of activities).
@@ -146,17 +158,16 @@ def extract_variants(df: pd.DataFrame) -> List[Dict[str, Any]]:
     Returns:
         List[Dict[str, Any]]: List of sorted dictionaries with variant details.
     """
-    # Group by Case ID and get chronological list of activities
-    case_groups = df.groupby('case:concept:name')
+    sequences = get_case_sequences(df)
     case_variants = {}
     
-    for case_id, group in case_groups:
-        activities = tuple(group['concept:name'].tolist())
-        if activities not in case_variants:
-            case_variants[activities] = []
-        case_variants[activities].append(case_id)
+    for case_id, activities in sequences.items():
+        act_tuple = tuple(activities)
+        if act_tuple not in case_variants:
+            case_variants[act_tuple] = []
+        case_variants[act_tuple].append(case_id)
         
-    total_cases = len(case_groups)
+    total_cases = len(sequences)
     sorted_variants = sorted(
         case_variants.items(), 
         key=lambda x: len(x[1]), 
