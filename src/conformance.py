@@ -55,3 +55,26 @@ def calculate_alignment_fitness(case_path: List[str], reference_path: List[str])
     
     # Normalize distance to get fitness
     return 1.0 - (dist / max_len)
+
+def analyze_deviations(case_path: List[str], reference_path: List[str]) -> List[str]:
+    """
+    Analyze step-by-step deviations of the case path against the reference path.
+    Detects missing and unexpected steps.
+    """
+    deviations = []
+    
+    # Set representations for quick membership check
+    ref_set = set(reference_path)
+    case_set = set(case_path)
+    
+    # 1. Detect Missing Steps (in reference, but not in case)
+    for act in reference_path:
+        if act not in case_set:
+            deviations.append(f"Missing: '{act}'")
+            
+    # 2. Detect Unexpected Steps (in case, but not in reference)
+    for act in case_path:
+        if act not in ref_set:
+            deviations.append(f"Unexpected: '{act}'")
+            
+    return deviations
