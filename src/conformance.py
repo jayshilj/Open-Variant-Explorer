@@ -59,7 +59,7 @@ def calculate_alignment_fitness(case_path: List[str], reference_path: List[str])
 def analyze_deviations(case_path: List[str], reference_path: List[str]) -> List[str]:
     """
     Analyze step-by-step deviations of the case path against the reference path.
-    Detects missing and unexpected steps.
+    Detects missing, unexpected, and out-of-order steps.
     """
     deviations = []
     
@@ -76,5 +76,16 @@ def analyze_deviations(case_path: List[str], reference_path: List[str]) -> List[
     for act in case_path:
         if act not in ref_set:
             deviations.append(f"Unexpected: '{act}'")
+            
+    # 3. Detect Out-of-Order Steps (occurring in different relative order)
+    common_activities = [act for act in case_path if act in ref_set]
+    if len(common_activities) > 1:
+        ref_indices = [reference_path.index(act) for act in common_activities]
+        # Check if the ref_indices are sorted
+        for k in range(len(ref_indices) - 1):
+            if ref_indices[k] > ref_indices[k + 1]:
+                act_curr = common_activities[k]
+                act_next = common_activities[k + 1]
+                deviations.append(f"Out of Order: '{act_curr}' executed before '{act_next}'")
             
     return deviations
