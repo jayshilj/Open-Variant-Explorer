@@ -5,7 +5,7 @@ import os
 # Append parent directory to path so we can import src modules
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from src.conformance import check_exact_match, calculate_alignment_fitness, analyze_deviations, compute_conformance_suite
+from src.conformance import check_exact_match, calculate_alignment_fitness, analyze_deviations, compute_conformance_suite, parse_custom_reference_path
 
 class TestConformance(unittest.TestCase):
 
@@ -67,6 +67,21 @@ class TestConformance(unittest.TestCase):
         self.assertTrue(res["case_results"]["case1"]["is_exact"])
         self.assertFalse(res["case_results"]["case2"]["is_exact"])
         self.assertEqual(res["case_results"]["case2"]["deviations"], ["Missing: 'B'"])
+
+    def test_parse_custom_reference_path(self):
+        # Normal sequence
+        self.assertEqual(
+            parse_custom_reference_path("Create Order, Approve Credit, Close Order"),
+            ["Create Order", "Approve Credit", "Close Order"]
+        )
+        # Sequence with spaces and empty spots
+        self.assertEqual(
+            parse_custom_reference_path("  Create Order , , Approve Credit , Close Order  "),
+            ["Create Order", "Approve Credit", "Close Order"]
+        )
+        # Empty/whitespace inputs
+        self.assertEqual(parse_custom_reference_path(""), [])
+        self.assertEqual(parse_custom_reference_path("   "), [])
 
 if __name__ == '__main__':
     unittest.main()
