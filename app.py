@@ -647,6 +647,37 @@ if file_to_parse is not None:
                     height=300
                 )
                 st.plotly_chart(fig_fit, use_container_width=True)
+                
+                # --- CONFORMANCE LEDGER ---
+                st.write("<br>", unsafe_allow_html=True)
+                st.subheader("📋 Conformance Audit Ledger")
+                st.markdown("Detailed breakdown of each case sequence, its relative alignment fitness score, and flagged operational deviations.")
+                
+                ledger_data = []
+                for cid, detail in conformance_res["case_results"].items():
+                    status = "✅ Conforming" if detail["is_exact"] else "🚨 Deviating"
+                    
+                    # Format deviations
+                    devs_str = ", ".join(detail["deviations"]) if detail["deviations"] else "None (Full Alignment)"
+                    
+                    ledger_data.append({
+                        "Case Identifier": cid,
+                        "Conformance Status": status,
+                        "Fitness Score": f"{detail['fitness'] * 100:.1f}%",
+                        "Executed Step Sequence": " ➡️ ".join(detail["path"]),
+                        "Flagged Deviations": devs_str
+                    })
+                    
+                ledger_df = pd.DataFrame(ledger_data)
+                
+                # Sort ledger: showing deviating/lowest fitness cases first to isolate issues
+                ledger_df = ledger_df.sort_values(by="Fitness Score")
+                
+                st.dataframe(
+                    ledger_df,
+                    hide_index=True,
+                    use_container_width=True
+                )
 
     except Exception as e:
         st.error(f"Failed to analyze event log. Details: {e}")
