@@ -40,5 +40,13 @@ class TestConformance(unittest.TestCase):
         # Missing B and unexpected Y
         self.assertEqual(sorted(analyze_deviations(["A", "Y", "C"], ref)), sorted(["Missing: 'B'", "Unexpected: 'Y'"]))
 
+    def test_analyze_deviations_out_of_order(self):
+        ref = ["A", "B", "C"]
+        # Out of order
+        self.assertEqual(
+            analyze_deviations(["B", "A", "C"], ref),
+            ["Out of Order: 'B' executed before 'A'"]
+        )
+
 if __name__ == '__main__':
     unittest.main()
