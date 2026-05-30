@@ -133,3 +133,17 @@ def compute_conformance_suite(case_sequences: Dict[str, List[str]], reference_pa
         "total_cases": total_cases,
         "violating_cases_count": violating_cases
     }
+
+def parse_custom_reference_path(path_str: str) -> List[str]:
+    """
+    Parse a custom comma-separated reference path string into a list of activity names.
+    E.g., "Create Order, Approve Credit, Close Order" -> ["Create Order", "Approve Credit", "Close Order"]
+    """
+    if not path_str or not path_str.strip():
+        return []
+        
+    # Split by comma and strip whitespace
+    parts = [part.strip() for part in path_str.split(",")]
+    
+    # Filter out empty strings
+    return [part for part in parts if part]
