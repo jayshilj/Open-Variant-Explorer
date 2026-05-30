@@ -2,8 +2,9 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from src.parser import load_and_clean_csv, extract_variants, compute_dfg_data, get_case_durations, compute_activity_durations, compute_case_step_stats
+from src.parser import load_and_clean_csv, extract_variants, compute_dfg_data, get_case_durations, compute_activity_durations, compute_case_step_stats, get_case_sequences
 from src.visualizer import generate_dfg_network
+from src.conformance import compute_conformance_suite, parse_custom_reference_path
 
 # --- PAGE SETUP ---
 st.set_page_config(
@@ -288,11 +289,12 @@ if file_to_parse is not None:
         st.markdown("<br>", unsafe_allow_html=True)
         
         # --- TABS FOR MODULES ---
-        tab_discovery, tab_variant, tab_lead_time, tab_activity = st.tabs([
+        tab_discovery, tab_variant, tab_lead_time, tab_activity, tab_conformance = st.tabs([
             "📡 Process Map Explorer", 
             "🧬 Variant Explorer", 
             "⏱️ SLA & Lead Times",
-            "📊 Activity Analysis"
+            "📊 Activity Analysis",
+            "⚖️ Conformance Auditing"
         ])
         
         # MODULE 1: PROCESS MAP DISCOVERY
@@ -538,6 +540,11 @@ if file_to_parse is not None:
                 
                 st.dataframe(act_df, hide_index=True, use_container_width=True)
                 st.markdown("</div>", unsafe_allow_html=True)
+                
+        # MODULE 5: CONFORMANCE AUDITING
+        with tab_conformance:
+            st.subheader("⚖️ Conformance Auditing & Compliance Checking")
+            st.markdown("Audit operational process paths against a reference target sequence (Happy Path or custom defined) to measure alignment fitness and identify specific structural deviations.")
 
     except Exception as e:
         st.error(f"Failed to analyze event log. Details: {e}")
